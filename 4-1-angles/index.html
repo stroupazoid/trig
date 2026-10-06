@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precalculus 4.1 — Exploring Angles</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --panel:#ffffff;
+      --card:#fbfbfd;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#d1d5db;
+      --accent:#2563eb;
+      --series2:#7c3aed;
+      --series3:#059669;
+      --series4:#ea580c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px;
+    }
+    h1{margin:0 0 6px}
+    .subtitle{color:var(--muted);margin-bottom:20px}
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+    button{
+      border:1px solid var(--border);
+      background:white;
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:15px;
+    }
+    button:hover{background:#f3f4f6}
+    button.active{
+      background:var(--accent);
+      color:white;
+      border-color:var(--accent);
+    }
+    .panel{display:none}
+    .panel.active{display:block}
+    .grid{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      align-items:start;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+    }
+    .stack>*+*{margin-top:16px}
+    .readout{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+    }
+    .big{font-size:28px;font-weight:700}
+    .muted{color:var(--muted)}
+    label{font-weight:600}
+    input[type=range]{width:100%}
+    input[type=number]{
+      width:100%;
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      font-size:16px;
+      background:white;
+    }
+    .std-buttons{display:flex;flex-wrap:wrap;gap:8px}
+    .formula{
+      font-size:22px;
+      font-weight:700;
+      margin:8px 0;
+    }
+    svg{width:100%;height:auto;display:block}
+    .two-col{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+    .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+    .radio-row{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+    .radio-row label{font-weight:400}
+    @media (max-width:800px){
+      .grid,.two-col{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Precalculus 4.1 — Exploring Angles</h1>
+  <div class="subtitle">Standard position, degree/radian conversion, coterminal angles, and angular vs. linear speed</div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="circle">Angle Explorer</button>
+    <button class="tab" data-tab="convert">Degrees ↔ Radians</button>
+    <button class="tab" data-tab="speed">Angular & Linear Speed</button>
+  </div>
+
+  <section id="circle" class="panel active">
+    <div class="grid">
+      <div class="card">
+        <svg id="circleSvg" viewBox="0 0 520 420" aria-label="Interactive unit circle">
+          <line x1="55" y1="210" x2="465" y2="210" stroke="#9ca3af" stroke-width="2"/>
+          <line x1="260" y1="25" x2="260" y2="395" stroke="#9ca3af" stroke-width="2"/>
+          <circle cx="260" cy="210" r="150" fill="none" stroke="#1f2937" stroke-width="2"/>
+          <path id="arcPath" fill="none" stroke="#7c3aed" stroke-width="7" stroke-linecap="round"/>
+          <line id="ray" x1="260" y1="210" x2="366" y2="104" stroke="#059669" stroke-width="5" stroke-linecap="round"/>
+          <circle id="handle" cx="366" cy="104" r="12" fill="#2563eb" stroke="white" stroke-width="3" style="cursor:grab"/>
+          <circle cx="260" cy="210" r="5" fill="#1f2937"/>
+          <text x="468" y="204" fill="#6b7280" font-size="15">+x</text>
+          <text x="267" y="32" fill="#6b7280" font-size="15">+y</text>
+          <text id="pointLabel" x="374" y="94" fill="#1f2937" font-size="15">P</text>
+        </svg>
+      </div>
+
+      <div class="stack">
+        <div>
+          <label for="angleSlider">Drag the blue point or use the slider</label>
+          <input id="angleSlider" type="range" min="-720" max="720" step="1" value="45">
+        </div>
+
+        <div class="radio-row">
+          <strong>Display:</strong>
+          <label><input type="radio" name="angleMode" value="deg" checked> Degrees</label>
+          <label><input type="radio" name="angleMode" value="rad"> Radians</label>
+        </div>
+
+        <div class="readout">
+          <div class="muted">Current angle</div>
+          <div id="angleReadout" class="big"></div>
+          <div id="positionReadout" style="margin-top:8px"></div>
+          <div id="cotermReadout" style="margin-top:8px"></div>
+        </div>
+
+        <div>
+          <strong>Jump to a standard angle</strong>
+          <div id="stdButtons" class="std-buttons" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="convert" class="panel">
+    <div class="two-col">
+      <div class="card">
+        <h2>Degrees → Radians</h2>
+        <div class="formula">radians = degrees × π/180</div>
+        <label for="degInput">Angle in degrees</label>
+        <input id="degInput" type="number" value="60" step="any">
+        <div id="degResult" class="big" style="margin-top:14px"></div>
+      </div>
+
+      <div class="card">
+        <h2>Radians → Degrees</h2>
+        <div class="formula">degrees = radians × 180/π</div>
+        <label for="radInput">Angle in radians</label>
+        <input id="radInput" type="number" value="1.0471975512" step="any">
+        <div id="radResult" class="big" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2>Why the formulas work</h2>
+      <div class="formula" style="text-align:center">180° = π radians</div>
+      <p>To convert from degrees to radians, multiply by π/180.</p>
+      <p>To convert from radians to degrees, multiply by 180/π.</p>
+    </div>
+  </section>
+
+  <section id="speed" class="panel">
+    <div class="grid">
+      <div class="card">
+        <svg id="speedSvg" viewBox="0 0 520 370" aria-label="Angular and linear speed animation">
+          <circle cx="260" cy="185" r="130" fill="none" stroke="#9ca3af" stroke-width="2"/>
+          <circle cx="260" cy="185" r="5" fill="#1f2937"/>
+          <line id="speedRadius" x1="260" y1="185" x2="390" y2="185" stroke="#059669" stroke-width="4"/>
+          <circle id="speedPoint" cx="390" cy="185" r="12" fill="#7c3aed"/>
+          <path id="speedArc" fill="none" stroke="#ea580c" stroke-width="6" stroke-linecap="round"/>
+          <text x="305" y="174" fill="#1f2937" font-size="16">r</text>
+          <text id="omegaText" x="20" y="30" fill="#1f2937" font-size="16"></text>
+        </svg>
+
+        <div class="controls">
+          <button id="playBtn">▶ Play</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div>
+          <label for="radiusSlider">Radius r = <span id="radiusValue">2.0</span> m</label>
+          <input id="radiusSlider" type="range" min="0.5" max="5" step="0.1" value="2">
+        </div>
+
+        <div>
+          <label for="omegaSlider">Angular speed ω = <span id="omegaValue">1.0</span> rad/s</label>
+          <input id="omegaSlider" type="range" min="0.1" max="4" step="0.1" value="1">
+        </div>
+
+        <div class="readout">
+          <div class="formula">v = rω</div>
+          <div id="linearSpeed" style="font-size:20px;font-weight:700"></div>
+          <p class="muted">Angular speed tells how fast the angle changes. Linear speed tells how fast the point moves along the circle.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+const panels = document.querySelectorAll('.panel');
+
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ANGLE EXPLORER
+const slider = document.getElementById('angleSlider');
+const ray = document.getElementById('ray');
+const handle = document.getElementById('handle');
+const arc = document.getElementById('arcPath');
+const label = document.getElementById('pointLabel');
+const readout = document.getElementById('angleReadout');
+const positionReadout = document.getElementById('positionReadout');
+const cotermReadout = document.getElementById('cotermReadout');
+const circleSvg = document.getElementById('circleSvg');
+
+let angle = 45;
+let displayMode = 'deg';
+
+const standardAngles = [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,360];
+
+function gcd(a,b){
+  a=Math.abs(a); b=Math.abs(b);
+  while(b){ [a,b]=[b,a%b]; }
+  return a || 1;
+}
+
+function simplifyRadians(deg){
+  const n = Math.round(deg);
+  if(n === 0) return '0';
+  const g = gcd(n,180);
+  let p = n/g;
+  const q = 180/g;
+  const sign = p < 0 ? '-' : '';
+  p = Math.abs(p);
+  const num = p === 1 ? '' : p;
+  const den = q === 1 ? '' : '/' + q;
+  return sign + num + 'π' + den;
+}
+
+function polar(deg,r=150){
+  const a=deg*Math.PI/180;
+  return [260+r*Math.cos(a),210-r*Math.sin(a)];
+}
+
+function makeArcPath(deg){
+  const r=55;
+  const steps=Math.max(2,Math.min(120,Math.ceil(Math.abs(deg)/6)));
+  const pts=[];
+  for(let i=0;i<=steps;i++){
+    const t=deg*i/steps*Math.PI/180;
+    pts.push([260+r*Math.cos(t),210-r*Math.sin(t)]);
+  }
+  return pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+' '+p[1].toFixed(2)).join(' ');
+}
+
+function updateAngle(v){
+  angle=Math.max(-720,Math.min(720,Number(v)||0));
+  slider.value=angle;
+
+  const norm=((angle%360)+360)%360;
+  const [x,y]=polar(norm);
+
+  ray.setAttribute('x2',x);
+  ray.setAttribute('y2',y);
+  handle.setAttribute('cx',x);
+  handle.setAttribute('cy',y);
+  arc.setAttribute('d',makeArcPath(angle));
+
+  label.setAttribute('x',Math.min(445,x+12));
+  label.setAttribute('y',Math.max(25,y-12));
+
+  readout.textContent = displayMode==='deg'
+    ? angle.toFixed(0)+'°'
+    : simplifyRadians(Math.round(angle));
+
+  let quad;
+  if([0,90,180,270].includes(norm)) quad='on an axis';
+  else if(norm<90) quad='Quadrant I';
+  else if(norm<180) quad='Quadrant II';
+  else if(norm<270) quad='Quadrant III';
+  else quad='Quadrant IV';
+
+  positionReadout.textContent =
+    'Terminal side: '+quad+'. In standard position, the vertex is at the origin and the initial side lies on the positive x-axis.';
+
+  cotermReadout.textContent =
+    'Two coterminal angles: '+(angle+360).toFixed(0)+'° and '+(angle-360).toFixed(0)+'°.';
+}
+
+slider.addEventListener('input',e=>updateAngle(e.target.value));
+
+document.querySelectorAll('input[name="angleMode"]').forEach(r=>{
+  r.addEventListener('change',e=>{
+    displayMode=e.target.value;
+    updateAngle(angle);
+  });
+});
+
+const stdButtons=document.getElementById('stdButtons');
+standardAngles.forEach(d=>{
+  const b=document.createElement('button');
+  b.textContent=d+'°';
+  b.addEventListener('click',()=>updateAngle(d));
+  stdButtons.appendChild(b);
+});
+
+let dragging=false;
+
+handle.addEventListener('pointerdown',e=>{
+  dragging=true;
+  handle.setPointerCapture(e.pointerId);
+});
+
+handle.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  const pt=circleSvg.createSVGPoint();
+  pt.x=e.clientX;
+  pt.y=e.clientY;
+  const p=pt.matrixTransform(circleSvg.getScreenCTM().inverse());
+  let deg=Math.atan2(210-p.y,p.x-260)*180/Math.PI;
+  if(deg<0) deg+=360;
+  updateAngle(Math.round(deg));
+});
+
+handle.addEventListener('pointerup',()=>dragging=false);
+handle.addEventListener('pointercancel',()=>dragging=false);
+
+updateAngle(45);
+
+// DEGREE/RADIAN CONVERTER
+const degInput=document.getElementById('degInput');
+const radInput=document.getElementById('radInput');
+const degResult=document.getElementById('degResult');
+const radResult=document.getElementById('radResult');
+
+function updateConversions(){
+  const d=parseFloat(degInput.value);
+  if(Number.isFinite(d)){
+    degResult.textContent=d+'° = '+simplifyRadians(Math.round(d))+
+      ' ≈ '+(d*Math.PI/180).toFixed(4)+' rad';
+  }else{
+    degResult.textContent='Enter a degree measure.';
+  }
+
+  const r=parseFloat(radInput.value);
+  if(Number.isFinite(r)){
+    radResult.textContent=r.toFixed(4)+' rad ≈ '+(r*180/Math.PI).toFixed(2)+'°';
+  }else{
+    radResult.textContent='Enter a radian measure.';
+  }
+}
+
+degInput.addEventListener('input',updateConversions);
+radInput.addEventListener('input',updateConversions);
+updateConversions();
+
+// ANGULAR / LINEAR SPEED
+const radiusSlider=document.getElementById('radiusSlider');
+const omegaSlider=document.getElementById('omegaSlider');
+const radiusValue=document.getElementById('radiusValue');
+const omegaValue=document.getElementById('omegaValue');
+const linearSpeed=document.getElementById('linearSpeed');
+const speedRadius=document.getElementById('speedRadius');
+const speedPoint=document.getElementById('speedPoint');
+const speedArc=document.getElementById('speedArc');
+const omegaText=document.getElementById('omegaText');
+const playBtn=document.getElementById('playBtn');
+const resetBtn=document.getElementById('resetBtn');
+
+let theta=0;
+let playing=false;
+let raf=null;
+let last=null;
+
+function renderSpeed(){
+  const r=Number(radiusSlider.value);
+  const w=Number(omegaSlider.value);
+
+  radiusValue.textContent=r.toFixed(1);
+  omegaValue.textContent=w.toFixed(1);
+  linearSpeed.textContent='v = ('+r.toFixed(1)+')('+w.toFixed(1)+') = '+(r*w).toFixed(2)+' m/s';
+  omegaText.textContent='ω = '+w.toFixed(1)+' rad/s';
+
+  const R=40+(r/5)*90;
+  const x=260+R*Math.cos(theta);
+  const y=185-R*Math.sin(theta);
+
+  speedRadius.setAttribute('x2',x);
+  speedRadius.setAttribute('y2',y);
+  speedPoint.setAttribute('cx',x);
+  speedPoint.setAttribute('cy',y);
+
+  const deg=Math.min(340,Math.abs(theta*180/Math.PI)%360);
+  const steps=40;
+  const pts=[];
+
+  for(let i=0;i<=steps;i++){
+    const t=deg*i/steps*Math.PI/180;
+    pts.push([260+55*Math.cos(t),185-55*Math.sin(t)]);
+  }
+
+  speedArc.setAttribute('d',
+    pts.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ')
+  );
+}
+
+function loop(t){
+  if(!playing) return;
+  if(last===null) last=t;
+
+  const dt=Math.min(.05,(t-last)/1000);
+  last=t;
+  theta += Number(omegaSlider.value)*dt;
+
+  renderSpeed();
+  raf=requestAnimationFrame(loop);
+}
+
+playBtn.addEventListener('click',()=>{
+  playing=!playing;
+  playBtn.textContent=playing?'❚❚ Pause':'▶ Play';
+  last=null;
+
+  if(playing) raf=requestAnimationFrame(loop);
+  else if(raf) cancelAnimationFrame(raf);
+});
+
+resetBtn.addEventListener('click',()=>{
+  playing=false;
+  if(raf) cancelAnimationFrame(raf);
+  theta=0;
+  playBtn.textContent='▶ Play';
+  renderSpeed();
+});
+
+radiusSlider.addEventListener('input',renderSpeed);
+omegaSlider.addEventListener('input',renderSpeed);
+
+renderSpeed();
+</script>
+</body>
+</html>
