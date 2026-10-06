@@ -1,1 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Section 4.2 — Trigonometric Functions: The Unit Circle</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#111827; --panel2:#1f2937; --text:#f8fafc; --muted:#cbd5e1;
+    --accent:#38bdf8; --accent2:#f59e0b; --good:#34d399; --danger:#fb7185; --grid:#334155;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#0b1020,#111827);color:var(--text)}
+  header{padding:24px 20px 10px;max-width:1200px;margin:auto}
+  h1{margin:0;font-size:clamp(1.6rem,3vw,2.5rem)}
+  header p{color:var(--muted);margin:.5rem 0 0}
+  .wrap{max-width:1200px;margin:auto;padding:16px 20px 40px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .tabs button{background:var(--panel2);color:var(--text);border:1px solid #475569;border-radius:999px;padding:10px 14px;cursor:pointer}
+  .tabs button.active{background:var(--accent);color:#082f49;border-color:var(--accent);font-weight:700}
+  .card{background:rgba(17,24,39,.96);border:1px solid #334155;border-radius:18px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+  .section{display:none}
+  .section.active{display:block}
+  .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+  @media(max-width:850px){.grid{grid-template-columns:1fr}}
+  canvas{width:100%;height:auto;background:#0b1220;border-radius:14px;border:1px solid #334155}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+  input[type=range]{width:min(420px,80vw)}
+  .pill{display:inline-block;background:#0b1220;border:1px solid #334155;border-radius:12px;padding:8px 10px;margin:4px 4px 0 0}
+  .formula{font-size:1.2rem;background:#0b1220;border-left:4px solid var(--accent);padding:12px 14px;border-radius:10px;margin:10px 0}
+  .small{color:var(--muted);font-size:.95rem}
+  .btn{background:#1e293b;color:white;border:1px solid #475569;border-radius:10px;padding:9px 12px;cursor:pointer}
+  .btn:hover{border-color:var(--accent)}
+  .btn.on{background:#0ea5e9;color:#06283b}
+  .value-grid{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:8px}
+  .value{background:#0b1220;border:1px solid #334155;border-radius:10px;padding:10px}
+  .value b{color:var(--accent)}
+  .warn{color:var(--danger);font-weight:700}
+  .ok{color:var(--good);font-weight:700}
+  footer{color:#94a3b8;text-align:center;padding-top:20px;font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>Section 4.2 — Trigonometric Functions: The Unit Circle</h1>
+  <p>Interactive visualizations built around the unit-circle structure in the course notes.</p>
+</header>
 
+<div class="wrap">
+  <div class="tabs">
+    <button class="active" data-tab="walk">1. Walk the Circle</button>
+    <button data-tab="six">2. Six Trig Functions</button>
+    <button data-tab="axes">3. Undefined at the Axes</button>
+    <button data-tab="special">4. Build π/4</button>
+    <button data-tab="evenodd">5. Even / Odd</button>
+    <button data-tab="pyth">6. Pythagorean Identities</button>
+    <button data-tab="period">7. Periodicity</button>
+  </div>
+
+  <section class="section active card" id="walk">
+    <div class="grid">
+      <div>
+        <canvas id="c1" width="620" height="620"></canvas>
+      </div>
+      <div>
+        <h2>Walk Around the Unit Circle</h2>
+        <p>On a unit circle, radius <b>r = 1</b>, so arc length satisfies <b>s = rθ = θ</b>.</p>
+        <div class="controls">
+          <label>Angle t:
+            <input id="r1" type="range" min="0" max="6.283185307" step="0.001" value="0.8">
+          </label>
+        </div>
+        <div class="formula">s = r t, and because r = 1, <b>s = t</b></div>
+        <div id="walkVals"></div>
+        <p class="small">Drag the slider and watch the orange arc grow exactly with the radian measure.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card" id="six">
+    <div class="grid">
+      <div><canvas id="c2" width="620" height="620"></canvas></div>
+      <div>
+        <h2>Where the Six Trig Functions Come From</h2>
+        <div class="controls">
+          <label>Angle t:
+            <input id="r2" type="range" min="0" max="6.283185307" step="0.001" value="0.9">
+          </label>
+        </div>
+        <div class="value-grid" id="sixVals"></div>
+        <div class="formula">cos t = x &nbsp;&nbsp; sin t = y</div>
+        <div class="formula">tan t = y/x &nbsp;&nbsp; csc t = 1/y &nbsp;&nbsp; sec t = 1/x &nbsp;&nbsp; cot t = x/y</div>
+        <p class="small">The point P(x,y) moves on x²+y²=1. The dashed projections make x and y visible.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card" id="axes">
+    <div class="grid">
+      <div><canvas id="c3" width="620" height="620"></canvas></div>
+      <div>
+        <h2>Why Some Values Are Undefined</h2>
+        <div class="controls">
+          <button class="btn axisBtn" data-a="0">0</button>
+          <button class="btn axisBtn" data-a="1.57079632679">π/2</button>
+          <button class="btn axisBtn" data-a="3.14159265359">π</button>
+          <button class="btn axisBtn" data-a="4.71238898038">3π/2</button>
+        </div>
+        <div id="axisVals"></div>
+        <p class="small">The issue is always division by zero. This animation highlights which denominator vanishes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card" id="special">
+    <div class="grid">
+      <div><canvas id="c4" width="620" height="620"></canvas></div>
+      <div>
+        <h2>Build the π/4 Point</h2>
+        <p>At 45°, the ray lies on <b>y = x</b>. On the unit circle:</p>
+        <div class="formula">x² + y² = 1</div>
+        <div class="formula">x² + x² = 1 → 2x² = 1 → x = √2/2</div>
+        <div class="formula">So P = (√2/2, √2/2)</div>
+        <div class="controls">
+          <button id="stepSpecial" class="btn">Advance derivation</button>
+          <button id="resetSpecial" class="btn">Reset</button>
+        </div>
+        <div id="specialText" class="small">Step 1: Draw the line y = x.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card" id="evenodd">
+    <div class="grid">
+      <div><canvas id="c5" width="620" height="620"></canvas></div>
+      <div>
+        <h2>Even and Odd Trig Functions</h2>
+        <div class="controls">
+          <label>Angle t:
+            <input id="r5" type="range" min="0.1" max="3.04" step="0.001" value="0.85">
+          </label>
+        </div>
+        <div class="formula">cos(-t) = cos(t) &nbsp; → cosine is even</div>
+        <div class="formula">sin(-t) = -sin(t) &nbsp; → sine is odd</div>
+        <div id="eoVals"></div>
+        <p class="small">The two points have the same x-coordinate and opposite y-coordinates.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card" id="pyth">
+    <div class="grid">
+      <div><canvas id="c6" width="620" height="620"></canvas></div>
+      <div>
+        <h2>Pythagorean Identities from the Circle</h2>
+        <div class="controls">
+          <label>Angle t:
+            <input id="r6" type="range" min="0.15" max="1.42" step="0.001" value="0.75">
+          </label>
+        </div>
+        <div class="formula">x² + y² = 1</div>
+        <div class="formula">cos²t + sin²t = 1</div>
+        <div class="controls">
+          <button id="divCos" class="btn">Divide by cos²t</button>
+          <button id="divSin" class="btn">Divide by sin²t</button>
+        </div>
+        <div id="pythText" class="formula">Choose a button to generate another identity.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card" id="period">
+    <div class="grid">
+      <div><canvas id="c7" width="620" height="620"></canvas></div>
+      <div>
+        <h2>Why Trig Functions Repeat</h2>
+        <div class="controls">
+          <label>Angle t:
+            <input id="r7" type="range" min="0" max="18.8495559215" step="0.002" value="1.2">
+          </label>
+          <button id="play7" class="btn">Play</button>
+        </div>
+        <div class="formula">sin(t + 2πk) = sin t</div>
+        <div class="formula">cos(t + 2πk) = cos t</div>
+        <div class="formula">tan(t + πk) = tan t</div>
+        <div id="periodVals"></div>
+        <p class="small">Sine and cosine repeat after one full revolution. Tangent repeats after half a revolution because y/x is unchanged.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Designed as a standalone HTML file for browser use or embedding by URL in Brightspace.</footer>
+</div>
+
+<script>
+const TAU=Math.PI*2;
+function fmt(v){
+  if(!isFinite(v)) return "undefined";
+  if(Math.abs(v)<1e-10) v=0;
+  return v.toFixed(3);
+}
+function fracAngle(t){
+  const vals=[
+    [0,"0"],[Math.PI/6,"π/6"],[Math.PI/4,"π/4"],[Math.PI/3,"π/3"],[Math.PI/2,"π/2"],
+    [Math.PI,"π"],[3*Math.PI/2,"3π/2"],[2*Math.PI,"2π"],[3*Math.PI,"3π"],[4*Math.PI,"4π"],[6*Math.PI,"6π"]
+  ];
+  for(const [a,s] of vals) if(Math.abs(t-a)<0.015) return s;
+  return t.toFixed(2)+" rad";
+}
+function setup(ctx){
+  const W=ctx.canvas.width,H=ctx.canvas.height,cx=W/2,cy=H/2,R=220;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle="#0b1220";ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle="#334155";ctx.lineWidth=1;
+  for(let k=-2;k<=2;k++){
+    ctx.beginPath();ctx.moveTo(cx+k*R/2,50);ctx.lineTo(cx+k*R/2,H-50);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(50,cy+k*R/2);ctx.lineTo(W-50,cy+k*R/2);ctx.stroke();
+  }
+  ctx.strokeStyle="#94a3b8";ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(35,cy);ctx.lineTo(W-35,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,35);ctx.lineTo(cx,H-35);ctx.stroke();
+  ctx.strokeStyle="#e2e8f0";ctx.lineWidth=3;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();
+  return {W,H,cx,cy,R};
+}
+function pointOn(t,g){return [g.cx+g.R*Math.cos(t),g.cy-g.R*Math.sin(t)]}
+function drawRay(ctx,t,g,color="#38bdf8"){
+  const [x,y]=pointOn(t,g);
+  ctx.strokeStyle=color;ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(g.cx,g.cy);ctx.lineTo(x,y);ctx.stroke();
+  ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,8,0,TAU);ctx.fill();
+  return [x,y];
+}
+function label(ctx,text,x,y,color="#f8fafc",size=20){
+  ctx.fillStyle=color;ctx.font=`${size}px system-ui`;ctx.fillText(text,x,y);
+}
+
+// Tabs
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");document.getElementById(b.dataset.tab).classList.add("active");
+});
+
+// 1
+const c1=document.getElementById("c1"),x1=c1.getContext("2d"),r1=document.getElementById("r1");
+function draw1(){
+  const t=+r1.value,g=setup(x1);
+  x1.strokeStyle="#f59e0b";x1.lineWidth=8;x1.beginPath();x1.arc(g.cx,g.cy,g.R,0,-t,true);x1.stroke();
+  drawRay(x1,t,g);
+  label(x1,"arc length s",g.cx+100,g.cy-210,"#f59e0b",18);
+  document.getElementById("walkVals").innerHTML=
+    `<span class="pill">t = ${fracAngle(t)}</span><span class="pill">r = 1</span><span class="pill">s = ${t.toFixed(3)}</span>`;
+}
+r1.oninput=draw1; draw1();
+
+// 2
+const c2=document.getElementById("c2"),x2=c2.getContext("2d"),r2=document.getElementById("r2");
+function draw2(){
+  const t=+r2.value,g=setup(x2),[px,py]=drawRay(x2,t,g);
+  x2.setLineDash([8,8]);x2.strokeStyle="#f59e0b";x2.lineWidth=3;
+  x2.beginPath();x2.moveTo(px,py);x2.lineTo(px,g.cy);x2.stroke();
+  x2.strokeStyle="#34d399";x2.beginPath();x2.moveTo(px,py);x2.lineTo(g.cx,py);x2.stroke();x2.setLineDash([]);
+  label(x2,"x = cos t",px-35,g.cy+28,"#f59e0b",18);
+  label(x2,"y = sin t",g.cx+15,py,"#34d399",18);
+  const s=Math.sin(t),c=Math.cos(t);
+  const items=[["sin t",s],["cos t",c],["tan t",Math.abs(c)<1e-6?Infinity:s/c],["csc t",Math.abs(s)<1e-6?Infinity:1/s],["sec t",Math.abs(c)<1e-6?Infinity:1/c],["cot t",Math.abs(s)<1e-6?Infinity:c/s]];
+  document.getElementById("sixVals").innerHTML=items.map(([n,v])=>`<div class="value"><b>${n}</b><br>${fmt(v)}</div>`).join("");
+}
+r2.oninput=draw2; draw2();
+
+// 3
+const c3=document.getElementById("c3"),x3=c3.getContext("2d"); let axisT=0;
+function draw3(){
+  const g=setup(x3),[px,py]=drawRay(x3,axisT,g,"#f59e0b");
+  const s=Math.sin(axisT),c=Math.cos(axisT);
+  const tanU=Math.abs(c)<1e-8, secU=tanU, cotU=Math.abs(s)<1e-8, cscU=cotU;
+  document.getElementById("axisVals").innerHTML=
+  `<div class="value-grid">
+   <div class="value">sin t = ${fmt(s)}</div><div class="value">cos t = ${fmt(c)}</div>
+   <div class="value">tan t = <span class="${tanU?'warn':'ok'}">${tanU?'undefined':fmt(s/c)}</span></div>
+   <div class="value">sec t = <span class="${secU?'warn':'ok'}">${secU?'undefined':fmt(1/c)}</span></div>
+   <div class="value">cot t = <span class="${cotU?'warn':'ok'}">${cotU?'undefined':fmt(c/s)}</span></div>
+   <div class="value">csc t = <span class="${cscU?'warn':'ok'}">${cscU?'undefined':fmt(1/s)}</span></div>
+  </div>
+  <p>${tanU||secU?'<span class="warn">x = 0, so division by x fails.</span>':''}
+  ${cotU||cscU?'<span class="warn">y = 0, so division by y fails.</span>':''}</p>`;
+}
+document.querySelectorAll(".axisBtn").forEach(b=>b.onclick=()=>{axisT=+b.dataset.a;draw3()}); draw3();
+
+// 4
+const c4=document.getElementById("c4"),x4=c4.getContext("2d"); let spStep=1;
+function draw4(){
+  const g=setup(x4);
+  x4.strokeStyle="#64748b";x4.lineWidth=3;
+  x4.beginPath();x4.moveTo(g.cx-g.R*.9,g.cy+g.R*.9);x4.lineTo(g.cx+g.R*.9,g.cy-g.R*.9);x4.stroke();
+  if(spStep>=2){
+    drawRay(x4,Math.PI/4,g,"#38bdf8");
+    label(x4,"π/4",g.cx+65,g.cy-35,"#f8fafc",22);
+  }
+  if(spStep>=3){
+    const [px,py]=pointOn(Math.PI/4,g);
+    x4.setLineDash([8,8]);x4.strokeStyle="#f59e0b";
+    x4.beginPath();x4.moveTo(px,py);x4.lineTo(px,g.cy);x4.stroke();
+    x4.beginPath();x4.moveTo(px,py);x4.lineTo(g.cx,py);x4.stroke();x4.setLineDash([]);
+    label(x4,"x = y",px-55,py-20,"#f59e0b",20);
+  }
+  if(spStep>=4){
+    label(x4,"(√2/2, √2/2)",g.cx+95,g.cy-165,"#34d399",20);
+  }
+  const texts=[
+    "Step 1: Draw the line y = x.",
+    "Step 2: The 45° ray hits the unit circle.",
+    "Step 3: At this point, x = y.",
+    "Step 4: Solve x² + x² = 1 to get x = y = √2/2."
+  ];
+  document.getElementById("specialText").textContent=texts[spStep-1];
+}
+document.getElementById("stepSpecial").onclick=()=>{spStep=Math.min(4,spStep+1);draw4()};
+document.getElementById("resetSpecial").onclick=()=>{spStep=1;draw4()}; draw4();
+
+// 5
+const c5=document.getElementById("c5"),x5=c5.getContext("2d"),r5=document.getElementById("r5");
+function draw5(){
+  const t=+r5.value,g=setup(x5);
+  const p1=drawRay(x5,t,g,"#38bdf8"), p2=drawRay(x5,-t,g,"#f59e0b");
+  x5.setLineDash([8,8]);x5.strokeStyle="#64748b";x5.beginPath();x5.moveTo(p1[0],p1[1]);x5.lineTo(p2[0],p2[1]);x5.stroke();x5.setLineDash([]);
+  label(x5,"t",p1[0]+12,p1[1]-8,"#38bdf8",20); label(x5,"-t",p2[0]+12,p2[1]+24,"#f59e0b",20);
+  document.getElementById("eoVals").innerHTML=
+   `<span class="pill">cos(t) = ${fmt(Math.cos(t))}</span><span class="pill">cos(-t) = ${fmt(Math.cos(-t))}</span><br>
+    <span class="pill">sin(t) = ${fmt(Math.sin(t))}</span><span class="pill">sin(-t) = ${fmt(Math.sin(-t))}</span>`;
+}
+r5.oninput=draw5; draw5();
+
+// 6
+const c6=document.getElementById("c6"),x6=c6.getContext("2d"),r6=document.getElementById("r6");
+function draw6(){
+  const t=+r6.value,g=setup(x6),[px,py]=drawRay(x6,t,g);
+  x6.strokeStyle="#f59e0b";x6.lineWidth=5;x6.beginPath();x6.moveTo(g.cx,g.cy);x6.lineTo(px,g.cy);x6.stroke();
+  x6.strokeStyle="#34d399";x6.beginPath();x6.moveTo(px,g.cy);x6.lineTo(px,py);x6.stroke();
+  label(x6,"cos t",g.cx+(px-g.cx)/2-25,g.cy+30,"#f59e0b",18);
+  label(x6,"sin t",px+12,g.cy+(py-g.cy)/2,"#34d399",18);
+}
+r6.oninput=draw6;draw6();
+document.getElementById("divCos").onclick=()=>document.getElementById("pythText").innerHTML=
+  `(cos²t + sin²t)/cos²t = 1/cos²t<br><b>1 + tan²t = sec²t</b>`;
+document.getElementById("divSin").onclick=()=>document.getElementById("pythText").innerHTML=
+  `(cos²t + sin²t)/sin²t = 1/sin²t<br><b>cot²t + 1 = csc²t</b>`;
+
+// 7
+const c7=document.getElementById("c7"),x7=c7.getContext("2d"),r7=document.getElementById("r7"); let playing=false,timer=null;
+function draw7(){
+  const t=+r7.value,g=setup(x7); drawRay(x7,t%TAU,g,"#38bdf8");
+  const revolutions=Math.floor(t/TAU), base=t%TAU;
+  document.getElementById("periodVals").innerHTML=
+   `<span class="pill">t = ${t.toFixed(2)} rad</span>
+    <span class="pill">completed revolutions = ${revolutions}</span><br>
+    <span class="pill">sin t = ${fmt(Math.sin(t))}</span>
+    <span class="pill">cos t = ${fmt(Math.cos(t))}</span>
+    <span class="pill">tan t = ${Math.abs(Math.cos(t))<1e-5?'undefined':fmt(Math.tan(t))}</span>`;
+}
+r7.oninput=draw7;draw7();
+document.getElementById("play7").onclick=()=>{
+  playing=!playing; document.getElementById("play7").textContent=playing?"Pause":"Play";
+  if(playing){
+    timer=setInterval(()=>{let v=+r7.value+.03;if(v>+r7.max)v=0;r7.value=v;draw7()},30);
+  }else clearInterval(timer);
+};
+</script>
+</body>
+</html>
