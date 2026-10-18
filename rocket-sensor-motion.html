@@ -1550,20 +1550,23 @@ html&gt;body{padding:0}&lt;/style&gt;
 &lt;/script&gt;
 &lt;div id=&quot;rocket-sensor-motion&quot;&gt;
 &lt;h2&gt;From sensor motion to CSV readings&lt;/h2&gt;
-&lt;div class=&quot;viz-controls&quot;&gt;&lt;button class=&quot;btn btn-primary&quot; id=&quot;sm-play&quot;&gt;Play&lt;/button&gt;&lt;label class=&quot;form-label&quot;&gt;Motion &lt;select class=&quot;form-select&quot; id=&quot;sm-mode&quot;&gt;&lt;option value=&quot;turn&quot;&gt;Turn a stationary sensor&lt;/option&gt;&lt;option value=&quot;launch&quot;&gt;Vertical launch to apogee&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn&quot; id=&quot;sm-reset&quot;&gt;Restart&lt;/button&gt;&lt;/div&gt;
+&lt;div class=&quot;viz-controls&quot;&gt;&lt;button class=&quot;btn btn-primary&quot; id=&quot;sm-play&quot;&gt;Play&lt;/button&gt;&lt;label class=&quot;form-label&quot;&gt;Motion &lt;select class=&quot;form-select&quot; id=&quot;sm-mode&quot;&gt;&lt;option value=&quot;turn&quot;&gt;Turn a stationary sensor&lt;/option&gt;&lt;option value=&quot;launch&quot;&gt;Launch and return to Earth&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;form-label&quot;&gt;Speed &lt;select class=&quot;form-select&quot; id=&quot;sm-speed&quot;&gt;&lt;option value=&quot;0.1&quot;&gt;0.1×&lt;/option&gt;&lt;option value=&quot;0.25&quot;&gt;0.25×&lt;/option&gt;&lt;option value=&quot;0.5&quot; selected&gt;0.5×&lt;/option&gt;&lt;option value=&quot;1&quot;&gt;1×&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn&quot; id=&quot;sm-reset&quot;&gt;Restart&lt;/button&gt;&lt;/div&gt;
 &lt;div class=&quot;viz-row&quot;&gt;&lt;label class=&quot;form-label&quot; for=&quot;sm-time&quot;&gt;Time &lt;span id=&quot;sm-clock&quot; class=&quot;tabular-nums&quot;&gt;0.0 s&lt;/span&gt;&lt;/label&gt;&lt;input class=&quot;form-range&quot; id=&quot;sm-time&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;20&quot; step=&quot;0.02&quot; value=&quot;0&quot; aria-label=&quot;Animation time&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;text-small&quot;&gt;Sensor arrows show directions, not position. Readings below are accelerometer components in m/s².&lt;/div&gt;
 &lt;div id=&quot;sm-state&quot; aria-live=&quot;polite&quot;&gt;Stationary · +z upward&lt;/div&gt;
 &lt;canvas id=&quot;sm-scene&quot; role=&quot;img&quot; aria-label=&quot;Cutaway sensor with three axes and a spring-supported mass, beside an altitude and pressure display&quot;&gt;&lt;/canvas&gt;
 &lt;div class=&quot;viz-row text-small&quot;&gt;&lt;span&gt;Cutaway schematic · mass displacement exaggerated&lt;/span&gt;&lt;span&gt;Solid bars: raw · outlined bars: corrected&lt;/span&gt;&lt;/div&gt;
+&lt;div id=&quot;sm-motion&quot; class=&quot;tabular-nums&quot;&gt;&lt;/div&gt;
 &lt;svg id=&quot;sm-bars&quot; role=&quot;img&quot; aria-label=&quot;Raw and corrected accelerometer components in meters per second squared&quot;&gt;&lt;/svg&gt;
-&lt;div class=&quot;table-responsive&quot;&gt;&lt;table class=&quot;table table-sm tabular-nums&quot;&gt;&lt;caption&gt;Live CSV preview · illustrative motion with calibration errors · units m/s²&lt;/caption&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;time_s&lt;/th&gt;&lt;th&gt;raw x&lt;/th&gt;&lt;th&gt;raw y&lt;/th&gt;&lt;th&gt;raw z&lt;/th&gt;&lt;th&gt;corrected x&lt;/th&gt;&lt;th&gt;corrected y&lt;/th&gt;&lt;th&gt;corrected z&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;sm-rows&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;div class=&quot;table-responsive&quot;&gt;&lt;table class=&quot;table table-sm tabular-nums&quot;&gt;&lt;caption&gt;Live CSV preview · illustrative motion with calibration errors · units m/s²&lt;/caption&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;time_s&lt;/th&gt;&lt;th&gt;raw ax_m_s2&lt;/th&gt;&lt;th&gt;raw ay_m_s2&lt;/th&gt;&lt;th&gt;raw az_m_s2&lt;/th&gt;&lt;th&gt;corrected fx_m_s2&lt;/th&gt;&lt;th&gt;corrected fy_m_s2&lt;/th&gt;&lt;th&gt;corrected fz_m_s2&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;sm-rows&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
 &lt;div class=&quot;text-small&quot;&gt;Bias (x, y, z): +0.4244, +0.0093, −1.9570 m/s² · Scale: 1.0021, 1.0008, 1.0259&lt;/div&gt;
+&lt;div class=&quot;text-small&quot;&gt;Corrected sensor reading is specific force, not position or gravity-removed acceleration. In free flight without drag it is zero; vertical motion acceleration is still −9.80 m/s². This teaching flight omits drag and recovery; the landing impact is not modeled.&lt;/div&gt;
 &lt;div id=&quot;sm-correction&quot; class=&quot;tabular-nums&quot;&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;style&gt;
 #rocket-sensor-motion{color:var(--foreground)}
 #rocket-sensor-motion canvas{width:100%;height:310px;display:block}
-#rocket-sensor-motion #sm-bars{width:100%;height:165px;display:block}
+#rocket-sensor-motion #sm-bars{width:100%;height:225px;display:block}
 #rocket-sensor-motion .viz-controls{margin-bottom:12px}
 #rocket-sensor-motion #sm-time{flex:1;min-width:130px}
 #rocket-sensor-motion caption{text-align:left;color:var(--foreground);padding:10px 0}
@@ -1579,16 +1582,22 @@ const f=n=&gt;(Math.abs(n)&lt;.0005?0:n).toFixed(3);
 function state(time){
  if(el(&#x27;mode&#x27;).value===&#x27;turn&#x27;){
   const a=time/20*Math.PI*2;
-  return {angle:a,force:[9.8*Math.sin(a),0,9.8*Math.cos(a)],h:0,a:0,status:&#x27;Stationary · rotating x and z axes&#x27;,duration:20};
+  return {angle:a,force:[-9.8*Math.sin(a),0,9.8*Math.cos(a)],h:0,a:0,status:&#x27;Stationary · rotating x and z axes&#x27;,duration:20};
  }
- const burn=1.4,acc=25,vb=acc*burn,hb=.5*acc*burn*burn,end=burn+vb/9.8,u=Math.min(time,end),coast=Math.max(0,u-burn);
- return {angle:0,force:[0,0,u&lt;burn?acc+9.8:0],h:u&lt;burn?.5*acc*u*u:hb+vb*coast-4.9*coast*coast,a:u&lt;burn?acc:-9.8,status:u&gt;=end?&#x27;Apogee · velocity zero · downward acceleration&#x27;:u&lt;burn?&#x27;Powered ascent · upward acceleration&#x27;:&#x27;Coasting upward · downward acceleration&#x27;,duration:end};
+ const burn=1.4,acc=25,vb=acc*burn,hb=.5*acc*burn*burn,apogee=burn+vb/9.8,land=burn+(vb+Math.sqrt(vb*vb+19.6*hb))/9.8;
+ const u=Math.min(time,land),coast=Math.max(0,u-burn),rest=u&lt;0||u&gt;=land;
+ const h=rest?0:u&lt;burn?.5*acc*u*u:Math.max(0,hb+vb*coast-4.9*coast*coast);
+ const v=rest?0:u&lt;burn?acc*u:vb-9.8*coast;
+ const a=rest?0:u&lt;burn?acc:-9.8;
+ const status=u&lt;0?&#x27;On launch pad · supported against gravity&#x27;:u&gt;=land?&#x27;Landed · supported again · impact omitted&#x27;:Math.abs(u-burn)&lt;1e-6?&#x27;Burnout · thrust ends · continuing upward&#x27;:Math.abs(u-apogee)&lt;1e-6?&#x27;Apogee · velocity zero · downward acceleration&#x27;:u&lt;burn?&#x27;Powered ascent · thrust on&#x27;:u&lt;apogee?&#x27;Coasting upward · thrust off&#x27;:&#x27;Falling toward Earth · thrust off&#x27;;
+ return {angle:0,force:[0,0,rest?9.8:u&lt;burn?acc+9.8:0],h,v,a,status,duration:land,events:[burn,apogee,land]};
+
 }
 function raw(F){return F.map((x,i)=&gt;b[i]+s[i]*x)}
 function color(name){return getComputedStyle(root).getPropertyValue(name).trim()||getComputedStyle(root).color}
 function draw(){
  const st=state(t),R=raw(st.force),C=R.map((x,i)=&gt;(x-b[i])/s[i]);
- el(&#x27;clock&#x27;).textContent=t.toFixed(2)+&#x27; s&#x27;;el(&#x27;time&#x27;).value=t;
+ el(&#x27;clock&#x27;).textContent=t.toFixed(2)+&#x27; s&#x27;;el(&#x27;motion&#x27;).textContent=el(&#x27;mode&#x27;).value===&#x27;launch&#x27;?&#x27;Vertical motion acceleration: &#x27;+st.a.toFixed(2)+&#x27; m/s² · Velocity: &#x27;+(Math.abs(st.v)&lt;1e-9?0:st.v).toFixed(2)+&#x27; m/s&#x27;:&#x27;Vertical motion acceleration: 0.00 m/s² · Height: 0.0 m&#x27;;el(&#x27;time&#x27;).value=t;
  if(st.status!==oldState){el(&#x27;state&#x27;).textContent=st.status;oldState=st.status}
  const w=canvas.clientWidth,dpr=devicePixelRatio||1;canvas.width=w*dpr;canvas.height=310*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
  const fg=color(&#x27;--foreground&#x27;),border=color(&#x27;--border&#x27;),bg=color(&#x27;--background&#x27;),ink=color(&#x27;--viz-series-1&#x27;),ink2=color(&#x27;--viz-series-2&#x27;);
@@ -1609,23 +1618,33 @@ function draw(){
  text(&#x27;Pressure&#x27;,ax,87);text((1001*Math.exp(-st.h/8434)).toFixed(2),ax,109);text(&#x27;hPa&#x27;,ax,129);
  ctx.strokeStyle=border;ctx.beginPath();ctx.moveTo(ax,250);ctx.lineTo(ax+78,250);ctx.stroke();
  let ry=240-st.h*1.35;ctx.fillStyle=ink;ctx.fillRect(ax+29,ry-24,16,31);ctx.beginPath();ctx.moveTo(ax+29,ry-24);ctx.lineTo(ax+37,ry-37);ctx.lineTo(ax+45,ry-24);ctx.fill();
+ if(el(&#x27;mode&#x27;).value===&#x27;launch&#x27;&amp;&amp;t&gt;=0&amp;&amp;t&lt;1.4){ctx.fillStyle=ink2;ctx.beginPath();ctx.moveTo(ax+30,ry+7);ctx.lineTo(ax+37,ry+23);ctx.lineTo(ax+44,ry+7);ctx.fill()}
  text(&#x27;Launch site&#x27;,ax-1,271);
- const bw=el(&#x27;bars&#x27;).clientWidth,zero=45+(bw-160)*.28,unit=(bw-160)/57,svgns=&#x27;http://www.w3.org/2000/svg&#x27;,svg=el(&#x27;bars&#x27;);svg.setAttribute(&#x27;viewBox&#x27;,`0 0 ${bw} 165`);svg.replaceChildren();
+ const bw=el(&#x27;bars&#x27;).clientWidth,zero=45+(bw-160)*.28,unit=(bw-160)/57,svgns=&#x27;http://www.w3.org/2000/svg&#x27;,svg=el(&#x27;bars&#x27;);svg.setAttribute(&#x27;viewBox&#x27;,`0 0 ${bw} 225`);svg.replaceChildren();
  function add(tag,attrs,txt){const e=document.createElementNS(svgns,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(txt)e.textContent=txt;svg.append(e)}
- add(&#x27;line&#x27;,{x1:zero,x2:zero,y1:15,y2:145,stroke:border});
- [&#x27;x&#x27;,&#x27;y&#x27;,&#x27;z&#x27;].forEach((name,i)=&gt;{let y=30+i*42;add(&#x27;text&#x27;,{x:8,y:y+6,fill:fg},name);for(let j=0;j&lt;2;j++){let v=j?C[i]:R[i];add(&#x27;rect&#x27;,{x:Math.min(zero,zero+v*unit),y:y+j*13,width:Math.max(1,Math.abs(v*unit)),height:10,fill:j?&#x27;none&#x27;:ink,stroke:j?ink2:&#x27;none&#x27;,&#x27;stroke-width&#x27;:j?2:0});}add(&#x27;text&#x27;,{x:bw-110,y:y+7,fill:fg},f(R[i])+&#x27; / &#x27;+f(C[i]));});
- add(&#x27;text&#x27;,{x:zero-4,y:161,fill:fg},&#x27;0&#x27;);
+ add(&#x27;line&#x27;,{x1:zero,x2:zero,y1:30,y2:207,stroke:border});
+ [&#x27;x&#x27;,&#x27;y&#x27;,&#x27;z&#x27;].forEach((name,i)=&gt;{let y=42+i*62;add(&#x27;text&#x27;,{x:8,y:y-10,fill:fg},&#x27;Accelerometer &#x27;+name+&#x27; component (m/s²)&#x27;);for(let j=0;j&lt;2;j++){let v=j?C[i]:R[i];add(&#x27;rect&#x27;,{x:Math.min(zero,zero+v*unit),y:y+j*13,width:Math.max(1,Math.abs(v*unit)),height:10,fill:j?&#x27;none&#x27;:ink,stroke:j?ink2:&#x27;none&#x27;,&#x27;stroke-width&#x27;:j?2:0});}add(&#x27;text&#x27;,{x:bw-110,y:y+9,fill:fg},f(R[i])+&#x27; / &#x27;+f(C[i]));});
+ add(&#x27;text&#x27;,{x:zero-4,y:224,fill:fg},&#x27;0&#x27;);
  const rows=[];for(let k=4;k&gt;=0;k--){let tm=Math.max(0,t-k*.1);if(k&amp;&amp;tm===0&amp;&amp;rows.length)continue;let F=state(tm).force,r=raw(F);rows.push(&#x27;&lt;tr&gt;&#x27;+[tm.toFixed(2),...r.map(f),...r.map((v,i)=&gt;f((v-b[i])/s[i]))].map(v=&gt;&#x27;&lt;td&gt;&#x27;+v+&#x27;&lt;/td&gt;&#x27;).join(&#x27;&#x27;)+&#x27;&lt;/tr&gt;&#x27;)}
  el(&#x27;rows&#x27;).innerHTML=rows.join(&#x27;&#x27;);
  el(&#x27;correction&#x27;).textContent=&#x27;z correction: (&#x27;+f(R[2])+&#x27; − (−1.957)) ÷ 1.0259 = &#x27;+f(C[2])+&#x27; m/s²&#x27;;
 }
-function pause(){playing=false;el(&#x27;play&#x27;).textContent=&#x27;Play&#x27;}
+function pause(event=false){playing=false;el(&#x27;play&#x27;).textContent=event?&#x27;Continue&#x27;:&#x27;Play&#x27;}
 el(&#x27;play&#x27;).onclick=()=&gt;{if(playing)pause();else{if(t&gt;=state(t).duration)t=0;playing=true;last=performance.now();el(&#x27;play&#x27;).textContent=&#x27;Pause&#x27;}};
-el(&#x27;reset&#x27;).onclick=()=&gt;{pause();t=0;draw()};
-el(&#x27;mode&#x27;).onchange=()=&gt;{pause();t=0;el(&#x27;time&#x27;).max=state(0).duration;draw()};
+el(&#x27;reset&#x27;).onclick=()=&gt;{pause();t=el(&#x27;mode&#x27;).value===&#x27;launch&#x27;?-1:0;draw()};
+el(&#x27;mode&#x27;).onchange=()=&gt;{pause();t=el(&#x27;mode&#x27;).value===&#x27;launch&#x27;?-1:0;el(&#x27;time&#x27;).min=t;el(&#x27;time&#x27;).max=state(0).duration;draw()};
 el(&#x27;time&#x27;).oninput=()=&gt;{pause();t=+el(&#x27;time&#x27;).value;draw()};
 new ResizeObserver(draw).observe(canvas);
-function frame(now){if(playing){t=Math.min(t+(now-last)/1000,state(t).duration);draw();if(t&gt;=state(t).duration)pause()}last=now;requestAnimationFrame(frame)}
+function frame(now){
+ if(playing){
+  const end=state(t).duration,dt=Math.min(.1,(now-last)/1000)*Number(el(&#x27;speed&#x27;).value);
+  let next=Math.min(t+dt,end);
+  const event=(state(t).events||[]).find(e=&gt;e&gt;t+1e-7&amp;&amp;e&lt;=next);
+  if(event!==undefined){next=event;pause(event&lt;end)}
+  t=next;draw();if(t&gt;=end)pause();
+ }
+ last=now;requestAnimationFrame(frame)
+}
 draw();requestAnimationFrame(frame);
 })();
 &lt;/script&gt;
